@@ -1,0 +1,20 @@
+{
+  "name": "ziw-blok",
+  "version": "1.0.0",
+  "description": "简易个人博客",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wszjw3/ziw-blok.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wszjw3/ziw-blok/issues"
+  },
+  "homepage": "https://github.com/wszjw3/ziw-blok#readme"
+}
