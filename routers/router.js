@@ -37,5 +37,7 @@ router.get("/user/logout", user.logout)
 //文章发表
 router.get("/article", user.keeoLog, article.addPage)
 
+//文章添加
+router.post("/article", user.keeoLog, article.add)
 
 module.exports = router
