@@ -92,6 +92,31 @@ exports.login = async(ctx) => {
 
             }
 
+            ctx.cookies.set("username", username, {
+                damain: "localhost",
+                path: "/",
+                maxAge: 36e5,
+                httpOnly: false,
+                overwrite: false,
+                signed: false
+
+            })
+
+            ctx.cookies.set("uid", data[0]._id, {
+                damain: "localhost",
+                path: "/",
+                maxAge: 36e5,
+                httpOnly: false,
+                overwrite: false,
+                signed: false
+
+            })
+
+            ctx.session = {
+                username,
+                uid: data[0]._id
+            }
+
             await ctx.render("isOk", {
                 status: "登录成功"
             })
@@ -101,4 +126,32 @@ exports.login = async(ctx) => {
                 status: err
             })
         })
+}
+
+//确定用户状态
+exports.keeoLog = async(ctx, next) => {
+    if (ctx.session.isNew) {
+        console.log(ctx.cookies)
+        if (ctx.cookies.get("uid")) {
+            ctx.session = {
+                username: ctx.cookies.get("username"),
+                uid: ctx.cookies.get("uid")
+            }
+        }
+    }
+
+    await next()
+}
+
+exports.logout = async ctx => {
+    ctx.session = null
+    ctx.cookies.set("uid", null, {
+        maxAge: 0
+    })
+    ctx.cookies.set("username", null, {
+        maxAge: 0
+    })
+
+    //重定向到首页
+    ctx.redirect("/")
 }

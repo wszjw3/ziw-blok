@@ -4,13 +4,16 @@ const router = new Router
 //拿到user表的操作对象
 const user = require('../control/user')
 
-//设计主页
+const article = require('../control/article')
+    //设计主页
 
-router.get("/", user.keepLog, async(ctx) => {
+router.get("/", user.keeoLog, async(ctx) => {
 
     //title 
+    console.log("session:" + ctx.session.isNew)
     await ctx.render("index", {
 
+        session: ctx.session,
         title: "首页"
     })
 })
@@ -26,5 +29,13 @@ router.post("/user/login", user.login)
 
 //注册路由
 router.post("/user/reg", user.reg)
+
+//用户退出
+router.get("/user/logout", user.logout)
+
+
+//文章发表
+router.get("/article", user.keeoLog, article.addPage)
+
 
 module.exports = router
