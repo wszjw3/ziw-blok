@@ -1,12 +1,6 @@
-const { db } = require('../Schema/config')
-const ArticleSchema = require('../Schema/article')
-const UserSchema = require('../Schema/user')
-
-const Article = db.model("articles", ArticleSchema)
-const User = db.model("users", UserSchema)
-
-const CommentSchema = require('../Schema/comment')
-const Comment = db.model("comments", CommentSchema)
+const Article = require('../modles/articles')
+const User = require('../modles/users')
+const Comment = require('../modles/comments')
 
 //返回文章发表页面
 exports.addPage = async(ctx) => {
@@ -133,4 +127,43 @@ exports.details = async(ctx) => {
         article,
         comment
     })
+}
+
+
+exports.artlist = async ctx => {
+    const uid = ctx.session.uid
+
+    const data = await Article.find({ author: uid })
+
+
+    ctx.body = {
+        code: 0,
+        count: data.length,
+        data
+
+    }
+
+}
+
+exports.del = async ctx => {
+
+    const articleId = ctx.params.id
+
+    let res = {
+        state: 1,
+        message: "删除成功"
+    }
+    await Article.findById(articleId)
+        .then(data => data.remove())
+        .catch(err => {
+            res = {
+                state: 0,
+                message: err
+            }
+        })
+
+    ctx.body = res
+
+
+
 }

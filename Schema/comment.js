@@ -22,4 +22,20 @@ const CommentSchema = new Schema({
     }
 })
 
+//设置评论的remove钩子 4
+
+CommentSchema.post("remove", (doc) => {
+
+    const Article = require('../modles/articles')
+    const User = require('../modles/users')
+    const { from, article } = doc
+    //文章评论-1
+    Article.updateOne({ _id: article }, { $inc: { commentNum: -1 } }).exec()
+
+    //用户评论0-1
+
+    User.updateOne({ _id: from }, { $inc: { commentNum: -1 } }).exec()
+
+})
+
 module.exports = CommentSchema

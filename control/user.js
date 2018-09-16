@@ -1,8 +1,6 @@
-const { db } = require('../Schema/config')
-const UserSchema = require('../Schema/user')
+const User = require('../modles/users')
 const encrypt = require('../util/encrypt')
 
-const User = db.model("users", UserSchema)
 
 exports.reg = async(ctx) => {
 
@@ -135,9 +133,14 @@ exports.keeoLog = async(ctx, next) => {
     if (ctx.session.isNew) {
         console.log(ctx.cookies)
         if (ctx.cookies.get("uid")) {
+            let uid = ctx.cookies.get("uid")
+
+            const avator = await User.findById(uid).then(data => data.avatar)
+
             ctx.session = {
                 username: ctx.cookies.get("username"),
-                uid: ctx.cookies.get("uid")
+                uid,
+                avator
             }
         }
     }
@@ -156,4 +159,28 @@ exports.logout = async ctx => {
 
     //重定向到首页
     ctx.redirect("/")
+}
+
+//头像上传
+exports.upload = async ctx => {
+    const filename = ctx.req.file.filename
+
+    let message = {}
+    await User.update({ _id: ctx.session.uid }, { $set: { avatar: "/avatar/" + filename } }, (err, data) => {
+        if (err) {
+            message = {
+                status: 0,
+                message: err
+            }
+        } else {
+            message = {
+                status: 1,
+                message: "上传成功"
+            }
+        }
+
+
+    })
+
+    ctx.body = message
 }

@@ -1,11 +1,6 @@
-const { db } = require('../Schema/config')
-const ArticleSchema = require('../Schema/article')
-const UserSchema = require('../Schema/user')
-const CommentSchema = require('../Schema/comment')
-
-const Article = db.model("articles", ArticleSchema)
-const User = db.model("users", UserSchema)
-const Comment = db.model("comments", CommentSchema)
+const Article = require('../modles/articles')
+const User = require('../modles/users')
+const Comment = require('../modles/comments')
 
 
 exports.save = async(ctx) => {
@@ -55,4 +50,42 @@ exports.save = async(ctx) => {
         })
 
     ctx.body = message
+}
+
+
+exports.comlist = async ctx => {
+    const uid = ctx.session.uid
+
+    const data = await Comment.find({ from: uid }).populate("article", "title")
+        // .then(data => data).catch(err => {
+        //     if (err) return console.log(err)
+        // })
+
+
+    ctx.body = {
+        code: 0,
+        count: data.length,
+        data
+    }
+
+}
+
+
+exports.del = async ctx => {
+    const commentId = ctx.params.id
+
+    let res = {
+        state: 1,
+        message: "删除成功"
+    }
+    await Comment.findById(commentId)
+        .then(data => data.remove())
+        .catch(err => {
+            res = {
+                state: 0,
+                message: err
+            }
+        })
+
+    ctx.body = res
 }

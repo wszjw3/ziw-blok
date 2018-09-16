@@ -9,6 +9,8 @@ const article = require('../control/article')
 const comment = require('../control/comment')
 
 const admin = require('../control/admin')
+
+const upload = require('../util/upload')
     //设计主页
 
 router.get("/", user.keeoLog, article.getList)
@@ -44,8 +46,24 @@ router.get("/article/:id", user.keeoLog, article.details)
 //评论提交
 router.post("/comment", user.keeoLog, comment.save)
 
-//
+//后台管理页面
 router.get("/admin/:id", user.keeoLog, admin.index)
+
+//头像上传
+router.post("/upload", user.keeoLog, upload.single("file"), user.upload)
+
+//获取用户的所有评论
+router.get("/user/comments", user.keeoLog, comment.comlist)
+
+//删除评论
+router.delete("/comment/:id", user.keeoLog, comment.del)
+
+
+//获取用户的所有文章
+router.get("/user/articles", user.keeoLog, article.artlist)
+
+//删除文章
+router.delete("/article/:id", user.keeoLog, article.del)
 
 router.get("*", async ctx => {
     await ctx.render("404", {
