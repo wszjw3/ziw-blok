@@ -1,11 +1,18 @@
 const { Schema } = require('./config')
+const ObjectId = Schema.Types.ObjectId
+
 
 const ArticleSchema = new Schema({
 
     title: String,
     content: String,
-    author: String,
-    tips: String
+    author: {
+        type: ObjectId,
+        ref: "users"
+    },
+    tips: String,
+    commentNum: Number
+
 
 }, {
     versionKey: false,

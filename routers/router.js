@@ -5,18 +5,13 @@ const router = new Router
 const user = require('../control/user')
 
 const article = require('../control/article')
+
+const comment = require('../control/comment')
+
+const admin = require('../control/admin')
     //设计主页
 
-router.get("/", user.keeoLog, async(ctx) => {
-
-    //title 
-    console.log("session:" + ctx.session.isNew)
-    await ctx.render("index", {
-
-        session: ctx.session,
-        title: "首页"
-    })
-})
+router.get("/", user.keeoLog, article.getList)
 
 router.get(/^\/user\/(?=reg|login)/, async(ctx) => {
     const show = /reg/.test(ctx.path)
@@ -39,5 +34,23 @@ router.get("/article", user.keeoLog, article.addPage)
 
 //文章添加
 router.post("/article", user.keeoLog, article.add)
+
+//文章列表分页
+router.get("/page/:id", article.getList)
+
+//文章内容
+router.get("/article/:id", user.keeoLog, article.details)
+
+//评论提交
+router.post("/comment", user.keeoLog, comment.save)
+
+//
+router.get("/admin/:id", user.keeoLog, admin.index)
+
+router.get("*", async ctx => {
+    await ctx.render("404", {
+        title: "404"
+    })
+})
 
 module.exports = router

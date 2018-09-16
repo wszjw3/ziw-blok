@@ -7,6 +7,7 @@ const body = require('koa-body')
 const { join } = require('path')
 const session = require('koa-session')
 
+
 //生成koa实例
 const app = new Koa
 app.keys = ['fengyu shige dashuaibi'];
@@ -44,3 +45,33 @@ app.use(router.routes()).use(router.allowedMethods())
 app.listen(3000, () => {
     console.log("项目启动成功 3000")
 })
+
+//创建管理员用户，如果已存在则返回
+{
+    const { db } = require('./Schema/config')
+    const UserSchema = require('./Schema/user')
+    const User = db.model("users", UserSchema)
+    const encrypt = require('./util/encrypt')
+
+    User.find({ username: "admin" })
+        .then(data => {
+            if (data.length == 0) {
+                console.log(data + "没有管理员")
+                new User({
+                    username: "admin",
+                    password: encrypt("admin"),
+                    role: 666,
+                    articleNum: 0,
+                    commentNum: 0
+                }).save().then(data => {
+                    console.log("管理员用户名：damin   密码 -> admin")
+                }).catch(err => {
+                    console.log(err)
+                    console.log("管理员账号创建失败")
+                })
+
+            } else {
+                console.log("管理员用户名：damin   密码 -> admin")
+            }
+        })
+}
