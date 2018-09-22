@@ -21,7 +21,12 @@ router.get(/^\/user\/(?=reg|login)/, async(ctx) => {
     await ctx.render("register", { show })
 })
 
+//进入web主题页面路由
+router.get("/web", user.keeoLog, article.getNavList)
 
+//进入web主题页面路由
+// router.get("/web/:id", user.keeoLog, article.getNavList)
+//登陆路由
 router.post("/user/login", user.login)
 
 //注册路由
@@ -64,6 +69,12 @@ router.get("/user/articles", user.keeoLog, article.artlist)
 
 //删除文章
 router.delete("/article/:id", user.keeoLog, article.del)
+
+//获取所有用户
+router.get("/user/users", user.keeoLog, user.userlist)
+
+//删除用户
+router.delete("/user/:id", user.keeoLog, user.del)
 
 router.get("*", async ctx => {
     await ctx.render("404", {

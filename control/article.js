@@ -75,7 +75,7 @@ exports.getList = async(ctx) => {
 
     let page = ctx.params.id || 1
     page--
-    const size = 2
+    const size = 10
     const maxNum = await Article.estimatedDocumentCount((err, num) => {
         err ? console.log(err) : num
     })
@@ -93,7 +93,7 @@ exports.getList = async(ctx) => {
             console.log(err)
         })
 
-    console.log(data)
+    //console.log(data)
     await ctx.render("index", {
         session: ctx.session,
         title: "首页",
@@ -102,6 +102,45 @@ exports.getList = async(ctx) => {
     })
 
 }
+
+
+exports.getNavList = async(ctx) => {
+
+
+    //查询每篇文章对应作者头像
+    //id ctx.params.id
+    const url = "-" + ctx.url.substr(1)
+
+    let page = ctx.params.id || 1
+    page--
+    const size = 10
+    const maxNum = await Article.estimatedDocumentCount((err, num) => {
+        err ? console.log(err) : num
+    })
+
+
+    const data = await Article.find({ tips: 'react' }).sort('-created')
+        .skip(size * page)
+        .limit(size)
+        .populate({
+            path: "author",
+            select: "username _id avatar" //关联属性
+        }) //连表查询
+        .then(data => data)
+        .catch(err => {
+            console.log(err)
+        })
+
+    //console.log(data)
+    await ctx.render("index" + url, {
+        session: ctx.session,
+        title: "web",
+        artList: data,
+        maxNum
+    })
+
+}
+
 
 exports.details = async(ctx) => {
     const _id = ctx.params.id

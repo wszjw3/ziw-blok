@@ -131,7 +131,7 @@ exports.login = async(ctx) => {
 //确定用户状态
 exports.keeoLog = async(ctx, next) => {
     if (ctx.session.isNew) {
-        console.log(ctx.cookies)
+        //console.log(ctx.cookies)
         if (ctx.cookies.get("uid")) {
             let uid = ctx.cookies.get("uid")
 
@@ -183,4 +183,34 @@ exports.upload = async ctx => {
     })
 
     ctx.body = message
+}
+
+exports.userlist = async ctx => {
+
+    const data = await User.find({})
+
+    ctx.body = {
+        code: 0,
+        count: data.length,
+        data
+    }
+}
+
+exports.del = async ctx => {
+    const uid = ctx.params.id
+
+    let res = {
+        state: 1,
+        message: "删除成功"
+    }
+    await User.findById(uid)
+        .then(data => data.remove())
+        .catch(err => {
+            res = {
+                state: 0,
+                message: err
+            }
+        })
+
+    ctx.body = res
 }
